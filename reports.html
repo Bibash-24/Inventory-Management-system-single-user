@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | Inventory Management System</title>
+    <link rel="stylesheet" href="reports.css">
+</head>
+<body>
+
+<header>
+    <h2>Reports</h2>
+
+    <div class="buttons">
+        <a href="dashboard.html" class="btn dashboard-btn">
+            ⬅ Dashboard
+        </a>
+
+        <button onclick="window.print()" class="btn print-btn">
+            🖨 Print
+        </button>
+
+        <button onclick="logout()" class="btn logout-btn">
+            Logout
+        </button>
+    </div>
+</header>
+
+<!-- FILTERS -->
+<form id="filterForm" class="filter-box">
+
+    <select id="reportType">
+        <option value="sales">Sales Reports</option>
+        <option value="purchases">Purchase Reports</option>
+    </select>
+
+    <input type="date" id="startDate">
+
+    <input type="date" id="endDate">
+
+    <input
+        type="text"
+        id="search"
+        placeholder="Search Product or Customer..."
+    >
+
+    <button type="submit" class="btn filter-btn">
+        Filter
+    </button>
+
+    <button
+        type="button"
+        class="btn low-stock-btn"
+        id="lowStockBtn"
+    >
+        ⚠ Low Stock
+    </button>
+
+    <button
+        type="button"
+        class="btn dashboard-btn"
+        id="resetBtn"
+    >
+        Reset
+    </button>
+
+</form>
+
+<!-- SUMMARY CARDS -->
+<div class="cards">
+
+    <div class="card">
+        <h3>Total Sales</h3>
+        <h2 id="totalSales">Rs 0.00</h2>
+    </div>
+
+    <div class="card">
+        <h3>Total Purchases</h3>
+        <h2 id="totalPurchases">Rs 0.00</h2>
+    </div>
+
+    <div class="card">
+        <h3>Total Profit</h3>
+        <h2 id="totalProfit">Rs 0.00</h2>
+    </div>
+
+    <div class="card">
+        <h3>Total Products</h3>
+        <h2 id="totalProducts">0</h2>
+    </div>
+
+    <div class="card">
+        <h3>Total Customers</h3>
+        <h2 id="totalCustomers">0</h2>
+    </div>
+
+    <div class="card">
+        <h3>Low Stock Items</h3>
+        <h2 id="lowStockCount">0</h2>
+    </div>
+
+</div>
+
+<!-- REPORT TABLE -->
+<h2 class="section-title" id="reportTitle">
+    Sales Reports
+</h2>
+
+<div class="table-container">
+
+    <table>
+        <thead id="reportHead"></thead>
+        <tbody id="reportBody"></tbody>
+    </table>
+
+</div>
+
+<!-- TOP PRODUCTS -->
+<h2 class="section-title">
+    Top Selling Products
+</h2>
+
+<div class="table-container">
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Total Quantity Sold</th>
+                <th>Total Revenue</th>
+            </tr>
+        </thead>
+
+        <tbody id="topProductsBody"></tbody>
+    </table>
+
+</div>
+
+<script src="reports.js"></script>
+
+</body>
+</html>
