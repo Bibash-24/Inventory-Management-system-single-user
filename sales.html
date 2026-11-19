@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales - Inventory Management System</title>
+    <link rel="stylesheet" href="./sales.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    <h2>Sales / POS</h2>
+    <div class="header-actions">
+        <a href="./inventory.html">Inventory</a>
+        <a href="./dashboard.html">Back to Dashboard</a>
+        <button type="button" onclick="logout()">Logout</button>
+    </div>
+</header>
+
+<main>
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+
+    <!-- SALES FORM -->
+    <section class="panel">
+        <h2>Record New Sale</h2>
+
+        <form id="salesForm">
+            <div id="cart">
+                <div class="cart-row">
+                    <div class="product-field">
+                        <input
+                            type="text"
+                            class="product-search"
+                            placeholder="Search product..."
+                            autocomplete="off"
+                        >
+
+                        <select class="product-select" required>
+                            <option value="">Select Product</option>
+                        </select>
+                    </div>
+
+                    <input
+                        type="number"
+                        class="quantity-input"
+                        placeholder="Quantity"
+                        min="1"
+                        step="1"
+                        required
+                    >
+
+                    <img class="preview" alt="Product preview" hidden>
+
+                    <button type="button" class="remove-row" title="Remove product" disabled>
+                        Remove
+                    </button>
+                </div>
+            </div>
+
+            <button type="button" id="addRowButton" class="add-button">
+                + Add Product
+            </button>
+
+            <div class="total-box">
+                Total: Rs. <span id="total">0.00</span>
+            </div>
+
+            <div class="customer-section">
+                <h3>Customer Details</h3>
+
+                <label for="customerName">Customer Name</label>
+                <input
+                    type="text"
+                    id="customerName"
+                    placeholder="Enter customer name"
+                    required
+                >
+
+                <label for="customerContact">Customer Contact</label>
+                <input
+                    type="text"
+                    id="customerContact"
+                    placeholder="Enter customer contact"
+                    required
+                >
+
+                <label for="paymentMethod">Payment Method</label>
+                <select id="paymentMethod" required>
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                    <option value="Mobile">Mobile Payment</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-button">
+                Record Sale
+            </button>
+        </form>
+    </section>
+
+    <!-- SALES RECORDS -->
+    <section class="records-section">
+        <h2>Sales Records</h2>
+
+        <input
+            type="text"
+            id="salesSearch"
+            class="sales-search"
+            placeholder="Search by product or customer name..."
+        >
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Image</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Customer</th>
+                        <th>Contact</th>
+                        <th>Payment</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody id="salesTable"></tbody>
+            </table>
+        </div>
+
+        <p id="emptyMessage" class="empty-message" hidden>
+            No sales records found.
+        </p>
+    </section>
+</main>
+
+<script src="./sales.js"></script>
+</body>
+</html>

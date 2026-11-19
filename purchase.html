@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Management - IMS</title>
+
+    <link rel="stylesheet" href="./purchase.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+    <h2>🛒 Purchase Management</h2>
+
+    <div class="buttons">
+        <button class="btn low-btn" id="lowStockButton" type="button">
+            ⚠ Low Stock
+        </button>
+
+        <a href="./inventory.html" class="btn inventory-btn">
+            Inventory
+        </a>
+
+        <a href="./dashboard.html" class="btn dashboard-btn">
+            ⬅ Dashboard
+        </a>
+
+        <button class="btn logout-btn" type="button" onclick="logout()">
+            Logout
+        </button>
+    </div>
+</header>
+
+<main>
+
+    <!-- LOW STOCK ALERT -->
+    <section class="alert-box" id="alertBox" hidden>
+        <h3>⚠ Low Stock Products</h3>
+
+        <div class="low-stock-container" id="lowStockContainer"></div>
+
+        <p id="noLowStock" hidden>
+            All products have sufficient stock.
+        </p>
+    </section>
+
+    <!-- MESSAGE -->
+    <div class="message" id="message" role="status" aria-live="polite"></div>
+
+    <!-- PURCHASE FORM -->
+    <section class="form-container">
+
+        <h2>Record New Purchase</h2>
+
+        <form id="purchaseForm">
+
+            <h3>📦 Products</h3>
+
+            <div id="productContainer">
+
+                <div class="product-row">
+
+                    <select class="product-select" required>
+                        <option value="">-- Select Product --</option>
+                    </select>
+
+                    <input
+                        type="number"
+                        class="quantity-input"
+                        placeholder="Quantity"
+                        min="1"
+                        step="1"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="remove-btn"
+                        title="Remove product"
+                        disabled
+                    >
+                        ❌
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button type="button" class="add-btn" id="addProductButton">
+                ➕ Add Product
+            </button>
+
+            <div class="purchase-total">
+                Estimated Total: Rs. <span id="totalAmount">0.00</span>
+            </div>
+
+            <!-- VENDOR DETAILS -->
+            <h3>🏪 Vendor Details</h3>
+
+            <label for="vendorName">Vendor Name</label>
+            <input
+                type="text"
+                id="vendorName"
+                placeholder="Enter vendor name"
+                required
+            >
+
+            <label for="vendorPhone">Vendor Phone</label>
+            <input
+                type="text"
+                id="vendorPhone"
+                placeholder="Enter vendor phone"
+            >
+
+            <label for="vendorAddress">Vendor Address</label>
+            <textarea
+                id="vendorAddress"
+                placeholder="Enter vendor address"
+                rows="3"
+            ></textarea>
+
+            <!-- PAYMENT DETAILS -->
+            <h3>💳 Payment Details</h3>
+
+            <label for="paymentMethod">Payment Method</label>
+            <select id="paymentMethod" required>
+                <option value="">-- Payment Method --</option>
+                <option value="Cash">Cash</option>
+                <option value="eSewa">eSewa</option>
+                <option value="Khalti">Khalti</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+
+            <label for="paymentStatus">Payment Status</label>
+            <select id="paymentStatus" required>
+                <option value="">-- Payment Status --</option>
+                <option value="Paid">Paid</option>
+                <option value="Credit">Credit</option>
+            </select>
+
+            <button type="submit" class="submit-btn">
+                ✅ Record Purchase
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- RECENT PURCHASES -->
+    <section class="records-section">
+
+        <h2>📋 Recent Purchases</h2>
+
+        <input
+            type="text"
+            id="purchaseSearch"
+            class="search-input"
+            placeholder="Search product or vendor..."
+        >
+
+        <div class="table-container">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Product</th>
+                        <th>Vendor</th>
+                        <th>Image</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Paid</th>
+                        <th>Due</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody id="purchaseTable"></tbody>
+            </table>
+
+        </div>
+
+        <p id="emptyMessage" class="empty-message" hidden>
+            No purchase records found.
+        </p>
+
+    </section>
+
+</main>
+
+<script src="./purchase.js"></script>
+
+</body>
+</html>
