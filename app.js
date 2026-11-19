@@ -12,27 +12,26 @@ const SESSION_KEY = "ims_current_user";
 // =====================================
 
 function openModal(id) {
-    document.getElementById(id).style.display = "flex";
+    const modal = document.getElementById(id);
+
+    if (modal) {
+        modal.style.display = "flex";
+    }
 }
 
 function closeModal(id) {
-    document.getElementById(id).style.display = "none";
+    const modal = document.getElementById(id);
+
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 // Close modal when clicking outside
 window.addEventListener("click", function(event) {
-
-    const signup = document.getElementById("signup");
-    const login = document.getElementById("login");
-
-    if (event.target === signup) {
-        closeModal("signup");
+    if (event.target.classList.contains("modal")) {
+        event.target.style.display = "none";
     }
-
-    if (event.target === login) {
-        closeModal("login");
-    }
-
 });
 
 // =====================================
@@ -40,21 +39,23 @@ window.addEventListener("click", function(event) {
 // =====================================
 
 function togglePassword(passId, confirmId = null) {
-
     const password = document.getElementById(passId);
 
-    password.type =
-        password.type === "password" ? "text" : "password";
+    if (password) {
+        password.type =
+            password.type === "password" ? "text" : "password";
+    }
 
     if (confirmId) {
-
         const confirmPassword =
             document.getElementById(confirmId);
 
-        confirmPassword.type =
-            confirmPassword.type === "password"
-                ? "text"
-                : "password";
+        if (confirmPassword) {
+            confirmPassword.type =
+                confirmPassword.type === "password"
+                    ? "text"
+                    : "password";
+        }
     }
 }
 
@@ -66,7 +67,7 @@ async function hashPassword(password) {
 
     if (!window.crypto || !window.crypto.subtle) {
         throw new Error(
-            "Secure password hashing requires HTTPS. Open the website through GitHub Pages."
+            "Secure hashing unavailable. Open this website using GitHub Pages HTTPS."
         );
     }
 
@@ -84,11 +85,21 @@ async function hashPassword(password) {
 }
 
 // =====================================
-// SIGNUP
+// DISPLAY MESSAGES
 // =====================================
 
-document.getElementById("signupForm")
-.addEventListener("submit", async function(event) {
+function showMessage(element, message, type) {
+    if (!element) return;
+
+    element.textContent = message;
+    element.style.display = "block";
+}
+
+// =====================================
+// SIGNUP FUNCTION
+// =====================================
+
+async function handleSignup(event) {
 
     event.preventDefault();
 
@@ -107,31 +118,32 @@ document.getElementById("signupForm")
     const confirmPassword =
         document.getElementById("signupCPassword").value;
 
-    const error =
-        document.getElementById("signupError");
-
-    const success =
-        document.getElementById("signupSuccess");
+    const error = document.getElementById("signupError");
+    const success = document.getElementById("signupSuccess");
 
     error.textContent = "";
     success.textContent = "";
 
-    // Check password
-    if (password !== confirmPassword) {
-        error.textContent = "Passwords do not match!";
+    if (!name || !email || !password) {
+        error.textContent = "Please fill in all required fields.";
         return;
     }
 
     if (password.length < 6) {
         error.textContent =
-            "Password must contain at least 6 characters!";
+            "Password must contain at least 6 characters.";
         return;
     }
 
-    // Single-user restriction
+    if (password !== confirmPassword) {
+        error.textContent = "Passwords do not match!";
+        return;
+    }
+
+    // Only one account is allowed
     if (localStorage.getItem(USER_KEY)) {
         error.textContent =
-            "An account already exists on this browser!";
+            "An account already exists! Please login instead.";
         return;
     }
 
@@ -152,25 +164,24 @@ document.getElementById("signupForm")
             JSON.stringify(user)
         );
 
-        success.textContent =
-            "Account created successfully! You can now login.";
-
         document.getElementById("signupForm").reset();
+
+        success.textContent =
+            "Account created successfully! Please login.";
 
     } catch (err) {
 
         error.textContent = err.message;
+        console.error("Signup error:", err);
 
     }
-
-});
+}
 
 // =====================================
-// LOGIN
+// LOGIN FUNCTION
 // =====================================
 
-document.getElementById("loginForm")
-.addEventListener("submit", async function(event) {
+async function handleLogin(event) {
 
     event.preventDefault();
 
@@ -180,27 +191,39 @@ document.getElementById("loginForm")
     const password =
         document.getElementById("loginPassword").value;
 
-    const error =
-        document.getElementById("loginError");
-
-    const success =
-        document.getElementById("loginSuccess");
+    const error = document.getElementById("loginError");
+    const success = document.getElementById("loginSuccess");
 
     error.textContent = "";
     success.textContent = "";
 
-    const savedUser = localStorage.getItem(USER_KEY);
+    let user;
 
-    if (!savedUser) {
-        error.textContent =
-            "No account found! Please sign up first.";
+    try {
+
+        const savedUser = localStorage.getItem(USER_KEY);
+
+        if (!savedUser) {
+            error.textContent =
+                "No account found! Please sign up first.";
+            return;
+        }
+
+        user = JSON.parse(savedUser);
+
+        if (!user || !user.email || !user.password) {
+            throw new Error("Saved account data is invalid.");
+        }
+
+    } catch (err) {
+
+        error.textContent = err.message;
         return;
+
     }
 
-    const user = JSON.parse(savedUser);
-
     if (email !== user.email) {
-        error.textContent = "User not found!";
+        error.textContent = "Incorrect email address!";
         return;
     }
 
@@ -209,43 +232,69 @@ document.getElementById("loginForm")
         const hashedPassword = await hashPassword(password);
 
         if (hashedPassword !== user.password) {
-            error.textContent = "Wrong password!";
+            error.textContent = "Incorrect password!";
             return;
         }
 
-        // Save current login session
+        // Save login session
+        const session = {
+            name: user.name,
+            email: user.email,
+            loginTime: new Date().toISOString()
+        };
+
         localStorage.setItem(
             SESSION_KEY,
-            JSON.stringify({
-                name: user.name,
-                email: user.email,
-                loginTime: new Date().toISOString()
-            })
+            JSON.stringify(session)
         );
 
-        success.textContent = "Login successful!";
+        success.textContent =
+            "Login successful! Redirecting...";
 
         document.getElementById("loginForm").reset();
 
-        // Open dashboard after successful login
         setTimeout(function() {
-            window.location.href = "dashboard.html";
-        }, 700);
+            window.location.replace("./dashboard.html");
+        }, 500);
 
     } catch (err) {
 
         error.textContent = err.message;
+        console.error("Login error:", err);
 
     }
+}
+
+// =====================================
+// INITIALIZE APPLICATION
+// =====================================
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const signupForm =
+        document.getElementById("signupForm");
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    if (!signupForm || !loginForm) {
+        console.error("Login or signup form not found.");
+        return;
+    }
+
+    // Connect signup form
+    signupForm.addEventListener("submit", handleSignup);
+
+    // Connect login form
+    loginForm.addEventListener("submit", handleLogin);
+
+    // Check existing login session
+    const currentUser = localStorage.getItem(SESSION_KEY);
+
+    if (currentUser) {
+        window.location.replace("./dashboard.html");
+    }
+
+    console.log("IMS authentication initialized successfully.");
 
 });
-
-// =====================================
-// CHECK EXISTING SESSION
-// =====================================
-
-const currentUser = localStorage.getItem(SESSION_KEY);
-
-if (currentUser) {
-    window.location.href = "dashboard.html";
-}
